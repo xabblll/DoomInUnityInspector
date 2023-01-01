@@ -1,0 +1,15 @@
+{
+  "name": "com.xabblll.doomininspector",
+  "version": "0.6.6",
+  "displayName": "Doom in Inspector",
+  "description": "Add Doomed Component to play Doom inside Unity Editor",
+  "unity": "2021.3",
+  "dependencies": {
+    "com.unity.editorcoroutines": "1.0.0"
+  },
+  "author": {
+    "name": "Xabblll",
+    "email": "xabblll@gmail.com",
+    "url": "https://github.com/xabblll"
+  }
+}
