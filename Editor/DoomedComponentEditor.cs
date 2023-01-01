@@ -86,7 +86,6 @@ namespace Editor
 
         public override bool RequiresConstantRepaint()
         {
-            // return isLoaded;
             return false;
         }
 
@@ -111,23 +110,20 @@ namespace Editor
                     Repaint();
 
                     var desiredTickTime = (long)Math.Floor(frequency * doomedComponent.TickTime);
-
-                    // frameTime = sw.ElapsedTicks;
-                    yield return null;
-                    //editorTickTime = sw.ElapsedTicks - frameTime;
-                    //frameTime += editorTickTime;
-                    // ticksToWait = (desiredTickTime - frameTime) / editorTickTime;
-                    //
-                    // for (int i = 0; i < ticksToWait; i++)
-                    // {
-                    //     yield return null;
-                    // }
-                    //
                     frameTime = sw.ElapsedTicks;
-                    var ticksToSleep = new TimeSpan(desiredTickTime - frameTime - frequency / 2000);
-                    if (ticksToSleep.Ticks > 0)
-                        Thread.Sleep(ticksToSleep);
+                    var gamePerformance = frameTime;
+                    yield return null;
 
+                    // More or less reliable way to wait exact time
+                    frameTime = sw.ElapsedTicks;
+                    long threadSleepTime = 0;
+                    var residentSleeper = new TimeSpan(ticks:1000);
+                    while (frameTime + 1000 < desiredTickTime)
+                    {
+                        Thread.Sleep(residentSleeper);
+                        frameTime = sw.ElapsedTicks;
+                        threadSleepTime += 1000;
+                    }
                     frameTime = sw.ElapsedTicks;
                     int waiter = 0;
                     while (frameTime < desiredTickTime)
@@ -137,7 +133,10 @@ namespace Editor
                     }
 
                     cpuLog =
-                        $"{(float)sw.ElapsedTicks / frequency:00.00000} ms | ThreadSleep:{ticksToSleep.Ticks} ticks | waite:{waiter}";
+                        $"CPU:{(float)sw.ElapsedTicks / frequency * 1000:00.00000} ms |" +
+                        $"ThreadSleep:{threadSleepTime:00000000000} ticks |" +
+                        $"FineWait:{waiter:000000}" +
+                        $"\nDoom Performance:{(float)gamePerformance / frequency * 1000:00.000ms}";
                     sw.Restart();
                 }
             }
@@ -243,7 +242,7 @@ namespace Editor
                 doomedComponent.LockKeyboard = rect.Contains(currentEvent.mousePosition);
             }
 
-            GUILayout.Label(cpuLog);
+            GUILayout.Label(cpuLog, EditorStyles.centeredGreyMiniLabel);
         }
     }
 }
