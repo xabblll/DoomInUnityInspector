@@ -11,5 +11,9 @@
     "name": "Xabblll",
     "email": "xabblll@gmail.com",
     "url": "https://github.com/xabblll"
+  },
+  "repository": {
+    "url": "https://github.com/xabblll/DoomInUnityInspector.git",
+    "type": "git"
   }
 }
