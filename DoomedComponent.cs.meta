@@ -3,7 +3,9 @@ guid: a635acbc0ce114659817a0da018133e2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Wad: {fileID: 102900000, guid: fd998310531ec45de8ca9a738b4adb26, type: 3}
+  - SoundFont: {fileID: 102900000, guid: 47bc78f7fce68412a952511b95224145, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
