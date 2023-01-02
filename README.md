@@ -26,7 +26,7 @@ Package contains original DOOM1.WAD Shareware version and Roland SC-55 SF2 bank,
 2. *Optional - select your own WAD and SF2 files
 3. Press DOOM button
 
-## Known issues & TODO
+## Known issues & TODO (I'll never do :3)
 
 1. Sometime on level load Midi Synthesizer tries to unload already unloaded voices, causing en error with LinkedList
 2. Mouse support
@@ -39,3 +39,4 @@ Package contains original DOOM1.WAD Shareware version and Roland SC-55 SF2 bank,
 4. MidiPlayer - OnAudioFilterRead can cause popping sounds
 5. Music volume probably not right
 6. MidiPlayer can't read some instruments correctly (e1m2 missing bass synth, e1m8 missing choir, or it's too quite)
+7. Code cleanup
