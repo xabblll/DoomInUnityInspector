@@ -42,16 +42,12 @@ namespace Editor
         private void OnEnable()
         {
             doomedComponent = (DoomedComponent)target;
-
-            CreateDoom();
-            //EditorApplication.update += Tick;
-            doomedComponent.LockKeyboard = true;
-
-            cpuCoroutine = EditorCoroutineUtility.StartCoroutine(DoomCPU(), this);
         }
 
-        private void CreateDoom()
+        private void StartDoom()
         {
+            if(isLoaded) return;
+            
             //Get Paths
             var wadPath = doomedComponent.WadPath;
             var sfPath = doomedComponent.SfPath;
@@ -81,7 +77,8 @@ namespace Editor
             {
                 throw e;
             }
-
+            cpuCoroutine = EditorCoroutineUtility.StartCoroutine(DoomCPU(), this);
+            doomedComponent.LockKeyboard = true;
         }
 
         public override bool RequiresConstantRepaint()
@@ -102,7 +99,7 @@ namespace Editor
                     doom.UpdateKeys(new List<KeyCode>(keysPressed));
                     if (doom.OnUpdate() == UpdateResult.Completed)
                     {
-                        DisposeDoom();
+                        StopDoom();
                         yield break;
                     }
 
@@ -142,9 +139,14 @@ namespace Editor
             }
         }
 
-        private void DisposeDoom()
+        private void StopDoom()
         {
             isLoaded = false;
+            doomedComponent.LockKeyboard = false;
+            
+            if (cpuCoroutine != null)
+                EditorCoroutineUtility.StopCoroutine(cpuCoroutine);
+            
             if (doom != null)
             {
                 doom.OnClose();
@@ -153,11 +155,7 @@ namespace Editor
 
             screen = null;
             keysPressed.Clear();
-            doomedComponent.LockKeyboard = false;
             Repaint();
-
-            if (cpuCoroutine != null)
-                EditorCoroutineUtility.StopCoroutine(cpuCoroutine);
 
             GC.Collect();
             EditorUtility.UnloadUnusedAssetsImmediate(true);
@@ -165,21 +163,15 @@ namespace Editor
 
         private void OnDisable()
         {
-            DisposeDoom();
+            StopDoom();
         }
-
-
-
-
+        
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            if (!isLoaded)
-                return;
-
             isFocused = doomedComponent.LockKeyboard;
-            if (isFocused)
+            if (isFocused && isLoaded)
             {
                 var keyboardID = GUIUtility.GetControlID(FocusType.Keyboard);
                 GUIUtility.keyboardControl = keyboardID;
@@ -212,7 +204,16 @@ namespace Editor
                 }
             }
 
-            DrawScreen();
+            if(isLoaded)
+                DrawScreen();
+            else
+            {
+                GUILayout.Space(20f);
+                if (GUILayout.Button("DOOM", GUILayout.Height(50f)))
+                {
+                    StartDoom();
+                }
+            }
         }
 
         private void DrawScreen()
